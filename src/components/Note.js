@@ -3,10 +3,12 @@ import NoteContext from "../contexts/notes/NoteContext";
 import NoteItem from "./NoteItem";
 import AddNote from "./AddNote";
 import { useRef } from "react";
-export default function Note() {
+import { useNavigate } from "react-router-dom";
+export default function Note({isLogged}) {
 
   var context = useContext(NoteContext);
   const {notes,getNotes,editNote,deleteNote} = context
+  let history = useNavigate()
   
   const [note, setNotes] = useState({
     id:"",
@@ -39,9 +41,15 @@ export default function Note() {
     }
 
   useEffect(() => {
-    getNotes()
+    if (localStorage.getItem("token")) {
+      getNotes()
+    }
+    else {
+      history("/login");//
+    }
+    console.log("use effect check",isLogged)
     // eslint-disable-next-line
-  }, [])
+  }, [isLogged])
   
     return (
         <>

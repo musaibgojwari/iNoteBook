@@ -1,13 +1,14 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
-export default function Login() {
+export default function Login({isLogged,setIsLogged}) {
     const [val,setVal] = useState({
         email:"",
         password:""
     })
 
+    let history = useNavigate();
 
-    const [isLoggedIn,setIsLoggedIn] = useState(false)
     const [authToken,setAuthToken] = useState(null)
 
     const handleChange = (e) => {
@@ -17,8 +18,9 @@ export default function Login() {
         })
     }
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e) => { 
         e.preventDefault()
+        setIsLogged(true)
         const payLoad = {
             "email":val.email,
             "password":val.password
@@ -33,23 +35,26 @@ export default function Login() {
 
             if(response.ok) {
                 const data = await response.json();
+                console.log(data)
+                localStorage.setItem('token',data.authToken)
                 setAuthToken(data.authToken)
-                setIsLoggedIn(true)
+                history("/")
             } else {
-                console.log("Please enter the correct credentials")
+                alert("Invalid credentials");
             }
           };
 
   return (
     <>
-    { !isLoggedIn &&
+    {console.log("triggered")}
+    { !isLogged &&
     <form>
         <div className="form-group">
-            <label htmlhtmlFor="email">Email address</label>
+            <label htmlFor="email">Email address</label>
             <input type="email" className="form-control" name='email' id="email" onChange={handleChange} aria-describedby="emailHelp" placeholder="Enter email"/>
         </div>
         <div className="form-group">
-            <label htmlhtmlFor="password">Password</label>
+            <label htmlFor="password">Password</label>
             <input type="password" className="form-control" name='password' id="password" onChange={handleChange} placeholder="Password"/>
         </div>
         <button type="submit" className="btn btn-primary my-2" onClick={handleSubmit}>Submit</button>

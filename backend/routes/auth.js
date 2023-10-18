@@ -12,61 +12,47 @@ const JWT_SECRET = "farahism!ne";
 
 // The email should be unique as it set to no duplicates
 // look the url will become /api/auth/createuser
-router.post(
-  "/createuser",
-  body("email", "Enter a valid email address").isEmail(),
-  body("password", "Password must be atleast 5 chars in length").isLength({
-    min: 5,
-  }),
-  body("name", "Enter a valid name").isLength({ min: 3 }),
+router.post("/createuser", 
+    body("email", "Enter a valid email address").isEmail(),
+    body("password", "Password must be at least 5 chars in length").isLength({ min: 5 }),
+    body("name", "Enter a valid name").isLength({ min: 3 }),
+    async (req, res) => {
+        let success = false;
+        
+        // Validation errors
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ success, errors: errors.array() });
+        }
+        
+        try {
+            let user = await User.findOne({ email: req.body.email });
+            if (user) {
+                return res.status(400).json({ success, error: "Sorry, a user with this email already exists" });
+            }
 
-  async (req, res) => {
-    let success = false
-    // Finds the validation errors in this request and wraps them in an object with handy functions
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      // console.log("emai=> ",req.body.email)
-      // console.log("password=> ",req.body.password)
-      // console.log("name=> ",req.body.name)
+            // Hash password and create user
+            const salt = await bcrypt.genSalt(10);
+            const secPass = await bcrypt.hash(req.body.password, salt);
+            user = await User.create({
+                name: req.body.name,
+                password: secPass,
+                email: req.body.email,
+            });
+            success = true;
 
-      return res.status(400).json({ success,errors: errors.array() });
+            // Create JWT auth token
+            const data = { user: { id: user.id } };
+            const authToken = jwt.sign(data, JWT_SECRET);
+
+            // Return the auth token as the response
+            return res.json({ success, authToken });
+
+        } catch (error) {
+            console.error(error.message);
+            return res.status(500).send("Some error occurred");
+        }
     }
-
-    try {
-      let user = await User.findOne({ email: req.body.email });
-      console.log(user);
-      if (user) {
-        return res
-          .status(400)
-          .json({success, error: "Sorry a user with this email already exists" });
-      }
-      // adding salt to the password
-      const salt = await bcrypt.genSalt(10);
-      const secPass = await bcrypt.hash(req.body.password, salt);
-      user = await User.create({
-        name: req.body.name,
-        password: secPass,
-        email: req.body.email,
-      });
-      success = true
-      // creatng a jwt auth token
-      const data = {
-        user: {
-          id: user.id,
-        },
-      };
-      const authToken = jwt.sign(data, JWT_SECRET);
-      res.json({success, authToken });
-
-      // __________________________________________________
-
-      console.log("done");
-      res.json(user);
-    } catch (error) {
-      console.error(error.message);
-      res.status(500).send(success,"Some error occured");
-    }
-  }
 );
 
 // ROUTE 2:

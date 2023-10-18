@@ -1,10 +1,12 @@
 import React from "react";
 import Note from "./Note";
-export default function Home() {
+
+export default function Home({isLogged}) {
+
 
   return (
     <div>
-      <Note/>
+      <Note isLogged={isLogged} />
     </div>
   );
 }
