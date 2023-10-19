@@ -9,7 +9,7 @@ export default function Signup() {
     })
 
 
-    const [success,setSuccess] = useState(false)
+    // const [success,setSuccess] = useState(false)
     let navigate = useNavigate();
 
     const handleSubmit = async (e) => {
@@ -51,6 +51,7 @@ export default function Signup() {
       <div className="form-group">
         <label htmlFor="username">Username</label>
         <input
+        autoComplete="off"
           type="text"
           className="form-control"
           id="username"
@@ -62,6 +63,7 @@ export default function Signup() {
       <div className="form-group">
         <label htmlFor="email">Email</label>
         <input
+        autoComplete="off"
           type="email"
           className="form-control"
           id="email"

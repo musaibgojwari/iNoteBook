@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState} from 'react'
 import { useNavigate } from 'react-router-dom'
 
 export default function Login({isLogged,setIsLogged}) {
@@ -51,7 +51,7 @@ export default function Login({isLogged,setIsLogged}) {
     <form>
         <div className="form-group">
             <label htmlFor="email">Email address</label>
-            <input type="email" className="form-control" name='email' id="email" onChange={handleChange} aria-describedby="emailHelp" placeholder="Enter email"/>
+            <input autoComplete="off" type="email" className="form-control" name='email' id="email" onChange={handleChange} aria-describedby="emailHelp" placeholder="Enter email"/>
         </div>
         <div className="form-group">
             <label htmlFor="password">Password</label>
