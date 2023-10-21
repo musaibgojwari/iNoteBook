@@ -7,7 +7,7 @@ const { body, validationResult } = require("express-validator");
 
 var jwt = require("jsonwebtoken");
 
-const JWT_SECRET = "farahism!ne";
+const JWT_SECRET = "@@musaib@@";
 
 
 // The email should be unique as it set to no duplicates
