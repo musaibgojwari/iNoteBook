@@ -75,7 +75,7 @@ router.post(
       if (!user) {
         return res
           .status(400)
-          .json({ error: "Please enter the correc email credentials" });
+          .json({ error: "Please enter the correct email credentials" });
       }
       // comparting the password
       const passwordCompare = await bcrypt.compare(password, user.password);

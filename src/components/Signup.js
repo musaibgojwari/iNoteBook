@@ -9,7 +9,7 @@ export default function Signup() {
     })
 
 
-    // const [success,setSuccess] = useState(false)
+    const [success,setSuccess] = useState(false)
     let navigate = useNavigate();
 
     const handleSubmit = async (e) => {

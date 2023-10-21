@@ -1,52 +1,38 @@
-import React, { useState} from 'react'
-import { useNavigate } from 'react-router-dom'
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-export default function Login({isLogged,setIsLogged}) {
-    const [val,setVal] = useState({
-        email:"",
-        password:""
-    })
+export default function Login({ isLogged, setIsLoggedIn }) {
+  const [val, setVal] = useState({ email: "", password: "" });
+  const [authToken,setAuthToken] = useState(null)
+  const navigate = useNavigate();
 
-    let history = useNavigate();
+  const handleChange = (e) => {
+    setVal({ ...val, [e.target.name]: e.target.value });
+  };
 
-    const [authToken,setAuthToken] = useState(null)
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const response = await fetch("http://localhost:5000/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(val),
+    });
 
-    const handleChange = (e) => {
-        setVal({
-            ...val,
-            [e.target.name]:e.target.value
-        })
+    if (response.ok) {
+      const data = await response.json();
+      localStorage.setItem('isLogged', 'true');
+      localStorage.setItem('token', data.authToken);
+      setAuthToken(data.authToken);
+      setIsLoggedIn(true);
+      navigate("/");
+    } else {
+      alert("Invalid credentials");
     }
-
-    const handleSubmit = async (e) => { 
-        e.preventDefault()
-        setIsLogged(true)
-        const payLoad = {
-            "email":val.email,
-            "password":val.password
-        }
-        const response = await fetch("http://localhost:5000/api/auth/login", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json"
-              },
-              body: JSON.stringify(payLoad),
-            });
-
-            if(response.ok) {
-                const data = await response.json();
-                console.log(data)
-                localStorage.setItem('token',data.authToken)
-                setAuthToken(data.authToken)
-                history("/")
-            } else {
-                alert("Invalid credentials");
-            }
-          };
+  };
 
   return (
     <>
-    {console.log("triggered")}
+    {/* {console.log("triggered")} */}
     { !isLogged &&
     <form>
         <div className="form-group">
